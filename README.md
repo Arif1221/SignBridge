@@ -1,14 +1,13 @@
 # SignBridge
 
 **SignBridge** is a browser-based prototype exploring two-way communication between Indian Sign Language (ISL) and spoken language.
-
+- **NEEDS MAJOR FIX TO LOGIC**
 The current web prototype includes:
 
 - **Sign → Voice:** camera-based hand-landmark tracking with experimental sign recognition and text-to-speech.
 - **Voice → Sign:** speech or text input mapped to a searchable sign vocabulary.
 - **Learn:** searchable sign cards with English and Hindi glosses.
 - **Privacy-first direction:** camera and microphone processing are intended to remain in the browser.
-
 > **Important:** This is an experimental isolated-sign prototype—not a continuous, grammar-aware ISL translation system. Recognition is heuristic and may produce incorrect or unknown results.
 
 ## Preview
