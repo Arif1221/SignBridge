@@ -26,7 +26,8 @@ function SignToVoice() {
         <p className="text-sm font-medium text-accent">Camera recognition</p>
         <h1 className="font-display text-3xl tracking-tight">Sign to voice</h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-          Show one isolated sign from the 30-sign vocabulary. The camera checks hand shape, palm direction, position, and motion, then only speaks when the match is clear and stable. Uncertain poses are rejected.
+          Show one isolated sign from the 30-sign vocabulary. The camera tracks one or two hands and the recognizer scores a
+          pose template, smooths across frames, then speaks. Continuous signing is out of scope.
         </p>
       </header>
 
@@ -57,8 +58,8 @@ function SignToVoice() {
               <p className="text-xs font-medium uppercase tracking-wide text-subtle">Live guess</p>
               {live ? <Badge>{Math.round(live.confidence * 100)}%</Badge> : null}
             </div>
-            <p className="mt-2 font-display text-xl">{live ? live.sign.spoken : "Not recognized"}</p>
-            <p className="text-sm text-muted">{live ? live.sign.howTo : "Show one clear sign. The app will reject uncertain matches instead of guessing."}</p>
+            <p className="mt-2 font-display text-xl">{live ? live.sign.spoken : "—"}</p>
+            <p className="text-sm text-muted">{live ? live.sign.howTo : "Show a clear hand to the camera."}</p>
           </div>
 
           <div className="rounded-xl border border-border bg-surface p-4 shadow-card">

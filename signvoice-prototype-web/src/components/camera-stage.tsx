@@ -149,7 +149,7 @@ export function CameraStage({ onStable, live, enabled }: Props) {
           } else {
             previousWrists.current.clear();
             setHandsDetected(0);
-            smoother.current.reset();
+            smoother.current.push(null);
             live?.(null);
           }
 

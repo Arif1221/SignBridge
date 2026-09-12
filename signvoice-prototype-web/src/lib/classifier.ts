@@ -21,22 +21,38 @@ const MOTION_COMPAT: Record<string, string[]> = {
 
 function scoreSign(sign: Sign, feat: HandFeatures): number {
   const ham = fingerHamming(sign.fingers, feat.fingers);
-  const fingerScore = 1 - ham / 5;
-  let score = fingerScore * 0.58;
+  let score = 1 - ham / 5;
 
-  if (sign.palm === feat.palm) score += 0.18;
-  else score -= 0.12;
-
-  if (sign.height === feat.height) score += 0.08;
+  if (sign.palm === feat.palm) score += 0.12;
+  else if (
+    (sign.palm === "out" && feat.palm === "side") ||
+    (sign.palm === "side" && feat.palm === "out")
+  )
+    score += 0.04;
   else score -= 0.06;
 
-  if (sign.motion === feat.motion) score += sign.motion === "none" ? 0.10 : 0.16;
-  else if (sign.motion === "none" && feat.motion !== "none") score -= 0.12;
-  else score -= 0.10;
+  if (sign.height === feat.height) score += 0.1;
+  else score -= 0.04;
 
-  if (sign.twoHands) score += 0.08;
+  const okMotion = MOTION_COMPAT[sign.motion] ?? ["none"];
+  if (okMotion.includes(feat.motion)) score += sign.motion === "none" ? 0.02 : 0.14;
+  else if (sign.motion !== "none") score -= 0.12;
 
-  return Math.max(0, Math.min(1, score));
+  if (sign.id === "hello" && feat.height === "face" && feat.motion === "wave") score += 0.18;
+  if (sign.id === "five" && feat.motion !== "none") score -= 0.1;
+  if (sign.id === "stop" && feat.motion !== "none") score -= 0.08;
+  if (sign.id === "good" && feat.fingers.thumb && !feat.fingers.index) score += 0.1;
+  if (sign.id === "bad" && feat.fingers.thumb && feat.motion === "nod") score += 0.08;
+  if (sign.id === "no" && feat.motion === "shake") score += 0.12;
+  if (sign.id === "yes" && feat.motion === "nod") score += 0.12;
+  if (sign.id === "thank-you" && feat.height === "face") score += 0.08;
+  if (sign.id === "water" && feat.height === "face") score += 0.1;
+  if (sign.id === "food" && feat.height === "face") score += 0.1;
+  if (sign.id === "nine" && feat.palm === "side") score += 0.06;
+  if (sign.id === "eight" && feat.palm === "out") score += 0.04;
+  if (sign.id === "zero" && feat.fingers.thumb && feat.fingers.index) score += 0.05;
+
+  return Math.max(0, Math.min(1, score / 1.45));
 }
 
 export function classify(features: HandFeatures | HandFeatures[]): Prediction | null {
@@ -65,8 +81,8 @@ export function classify(features: HandFeatures | HandFeatures[]): Prediction | 
   }).sort((a, b) => b.confidence - a.confidence);
 
   const top = ranked[0];
-  if (!top || top.confidence < 0.68) return null;
-  if (ranked[1] && top.confidence - ranked[1].confidence < 0.12) {
+  if (!top || top.confidence < 0.42) return null;
+  if (ranked[1] && top.confidence - ranked[1].confidence < 0.04 && top.confidence < 0.62) {
     return null;
   }
   return top;
@@ -100,7 +116,7 @@ export class Smoother {
     }
     if (!best || best.n < 4) return null;
     const conf = best.sum / best.n;
-    if (conf < 0.70) return null;
+    if (conf < 0.48) return null;
     if (best.pred.sign.id === this.lastSpokenId && now - this.lastSpokenAt < 2200) return null;
     this.lastSpokenId = best.pred.sign.id;
     this.lastSpokenAt = now;
