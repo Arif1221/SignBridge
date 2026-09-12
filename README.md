@@ -56,7 +56,8 @@ For camera access, use the Vite localhost address rather than opening the files 
 ## Project structure
 
 ```text
-src/
+signvoice-prototype-web/
+├── src/
 ├── components/       Reusable UI and camera components
 ├── lib/              Sign data, feature extraction, recognition and speech helpers
 └── routes/           Home, sign-to-voice, voice-to-sign and learning screens
